@@ -22,6 +22,6 @@ app.get('/:slug', async (req, res) => {
 
 require('./src/controllers/authController')(app)
 
-app.listen(process.env.port || 3002, () => {
+app.listen(process.env.PORT || 3002, () => {
     console.log('servidor iniciado')
 })
