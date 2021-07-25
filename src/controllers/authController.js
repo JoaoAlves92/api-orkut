@@ -38,7 +38,7 @@ router.post('/autenticar', async (req, res) => {
     user.senha = undefined
 
     const token = jwt.sign({ id: user.id }, "tokensecretosuper", {
-        expiresIn: 86400                    
+        expiresIn: 86400                   
     })
 
     return res.send({ user, token })

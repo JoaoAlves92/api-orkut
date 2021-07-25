@@ -17,6 +17,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         select: false
+    },
+    statusRelacionamento: {
+        type: String,
+        required: true,
+        default: 'solteiro(a)'
     }
 })
 
