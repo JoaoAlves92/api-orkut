@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 
 
 router.post('/cadastro', async (req, res) => {
-    const { email } = req.body;
+    const { email, senha, nome, statusRelacionamento } = req.body;
 
     try {
         if ( await User.findOne({ email }) ) {
@@ -16,7 +16,17 @@ router.post('/cadastro', async (req, res) => {
 
         user.senha = undefined
 
-        return res.send({ user })
+        const token = jwt.sign({
+            id: user.id,
+            nome: nome,
+            email: email,
+            statusRelacionamento: statusRelacionamento
+        }, "tokensecretosuper", {
+            expiresIn: 86400                   
+        })
+        res.set('Authorization', token)
+        return res.send({ token })
+
     } catch (erro) {
         return res.status(400).send("O seguinte erro foi encontrado: " + erro)
     }
@@ -37,11 +47,28 @@ router.post('/autenticar', async (req, res) => {
 
     user.senha = undefined
 
-    const token = jwt.sign({ id: user.id }, "tokensecretosuper", {
+    const token = jwt.sign({
+        id: user.id,
+        nome: user.nome,
+        email: email,
+        statusRelacionamento: user.statusRelacionamento
+    }, "tokensecretosuper", {
         expiresIn: 86400                   
     })
+    res.set('Authorization', token)
+    return res.send({ token })
+})
 
-    return res.send({ user, token })
+router.post('/me', async (req, res) => {
+    const { authorization } = req.headers
+
+    let token = (authorization.split(' '))[1]
+
+    const user = jwt.verify(token, 'tokensecretosuper')
+    if (!user) {
+        return res.status(400).send({'erro': 'Um erro foi encontrado'})
+    }
+    return res.status(200).send({ user })
 })
 
 module.exports = app => app.use('/auth', router)
