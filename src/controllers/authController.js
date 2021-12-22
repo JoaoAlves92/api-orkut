@@ -64,6 +64,10 @@ router.post('/me', async (req, res) => {
 
     let token = (authorization.split(' '))[1]
 
+    if (!token) {
+        return res.send({msg: 'Nenhum token'})
+    }
+
     const user = jwt.verify(token, 'tokensecretosuper')
     if (!user) {
         return res.status(400).send({'erro': 'Um erro foi encontrado'})
